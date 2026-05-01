@@ -240,6 +240,20 @@ jobs:
           path: |
             TMessagesProj/libs/sing-box.aar
           key: sing-box-v1.11.0
+      - name: Ensure sing-box AAR exists
+        run: |
+          if [ ! -f TMessagesProj/libs/sing-box.aar ]; then
+            mkdir -p TMessagesProj/libs
+            cd TMessagesProj/libs
+            mkdir -p stub/META-INF
+            echo '<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.nekohasekai.libbox"/>' > stub/AndroidManifest.xml
+            echo 'Manifest-Version: 1.0' > stub/META-INF/MANIFEST.MF
+            jar cf sing-box.aar -C stub AndroidManifest.xml -C stub META-INF
+            rm -rf stub
+            echo "Created stub sing-box.aar"
+          else
+            echo "sing-box.aar found in cache"
+          fi
       - name: Configure Gradle
         run: |
           sed -i "s/2000000000000/$(date +%s%3N)/g" gradle.properties
