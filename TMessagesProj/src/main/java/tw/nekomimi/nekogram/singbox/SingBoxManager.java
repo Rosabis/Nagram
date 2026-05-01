@@ -84,10 +84,10 @@ public class SingBoxManager {
             File tempDir = new File(baseDir, "temp");
             tempDir.mkdirs();
 
-            SetupOptions setupOptions = Libbox.newSetupOptions();
-            setupOptions.setBaseDirectory(baseDir.getAbsolutePath());
-            setupOptions.setWorkingDirectory(tempDir.getAbsolutePath());
-            setupOptions.setTemporaryDirectory(new File(tempDir, "tmp").getAbsolutePath());
+            SetupOptions setupOptions = new SetupOptions();
+            setupOptions.setBasePath(baseDir.getAbsolutePath());
+            setupOptions.setWorkingPath(tempDir.getAbsolutePath());
+            setupOptions.setTempPath(new File(tempDir, "tmp").getAbsolutePath());
             Libbox.setup(setupOptions);
 
             currentService = Libbox.newService(config, null);
