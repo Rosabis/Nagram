@@ -722,11 +722,15 @@ public class Browser {
         } else if ("tg".equals(uri.getScheme()) ||
                 "vmess".equals(uri.getScheme()) ||
                 "vmesss1".equals(uri.getScheme()) ||
+                "vless".equals(uri.getScheme()) ||
                 "ss".equals(uri.getScheme()) ||
                 "ssr".equals(uri.getScheme()) ||
                 "ws".equals(uri.getScheme()) ||
                 "wss".equals(uri.getScheme()) ||
-                "trojan".equals(uri.getScheme())) {
+                "trojan".equals(uri.getScheme()) ||
+                "hysteria".equals(uri.getScheme()) ||
+                "hysteria2".equals(uri.getScheme()) ||
+                "hy2".equals(uri.getScheme())) {
             return true;
         } else if ("telegram.dog".equals(host)) {
             String path = uri.getPath();

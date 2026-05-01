@@ -613,6 +613,38 @@ public class ProxySettingsActivity extends BaseFragment {
                 }
             }
 
+            if (params == null && (clipText.startsWith("vless://") || clipText.startsWith("hysteria://") || clipText.startsWith("hysteria2://") || clipText.startsWith("hy2://"))) {
+                try {
+                    android.net.Uri proxyUri = android.net.Uri.parse(clipText);
+                    String scheme = proxyUri.getScheme();
+                    pasteType = TYPE_MTPROTO;
+                    pasteFields[FIELD_IP] = proxyUri.getHost();
+                    int proxyPort = proxyUri.getPort();
+                    if (proxyPort != -1) {
+                        pasteFields[FIELD_PORT] = String.valueOf(proxyPort);
+                    }
+                    pasteFields[FIELD_SECRET] = clipText;
+                    if ("vless".equals(scheme)) {
+                        String userInfo = proxyUri.getUserInfo();
+                        if (userInfo != null) {
+                            pasteFields[FIELD_USER] = userInfo;
+                        }
+                    } else if ("hysteria".equals(scheme)) {
+                        String auth = proxyUri.getQueryParameter("auth");
+                        if (auth != null) {
+                            pasteFields[FIELD_PASSWORD] = auth;
+                        }
+                    } else {
+                        String userInfo = proxyUri.getUserInfo();
+                        if (userInfo != null) {
+                            pasteFields[FIELD_PASSWORD] = userInfo;
+                        }
+                    }
+                    params = new String[0];
+                } catch (Exception ignore) {
+                }
+            }
+
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     final String[] pair = params[i].split("=");

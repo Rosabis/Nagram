@@ -1069,6 +1069,32 @@ public class ConnectionsManager extends BaseController {
             _secret = secret;
         }
 
+        tw.nekomimi.nekogram.singbox.SingBoxManager sbMgr = tw.nekomimi.nekogram.singbox.SingBoxManager.getInstance();
+        boolean isSingBox = enabled && !TextUtils.isEmpty(secret) &&
+                (secret.startsWith("vless://") || secret.startsWith("hysteria://") ||
+                 secret.startsWith("hysteria2://") || secret.startsWith("hy2://") ||
+                 secret.startsWith("vmess://") || secret.startsWith("vmess1://") ||
+                 secret.startsWith("trojan://") || secret.startsWith("ss://"));
+
+        if (isSingBox) {
+            try {
+                org.telegram.messenger.SharedConfig.ProxyInfo sbProxy = new org.telegram.messenger.SharedConfig.ProxyInfo(
+                        address, port, username, password, secret);
+                sbMgr.start(sbProxy);
+                address = "127.0.0.1";
+                port = sbMgr.getLocalSocksPort();
+                username = "";
+                password = "";
+                secret = "";
+            } catch (Exception e) {
+                org.telegram.messenger.FileLog.e("sing-box start failed", e);
+                sbMgr.stop();
+                isSingBox = false;
+            }
+        } else if (sbMgr.isRunning()) {
+            sbMgr.stop();
+        }
+
         for (int a : SharedConfig.activeAccounts) {
             if (enabled && !TextUtils.isEmpty(address)) {
                 native_setProxySettings(a, address, port, username, password, secret);

@@ -370,6 +370,7 @@ dependencies {
     implementation project(":openpgp-api")
 
     compileOnly fileTree("libs")
+    implementation files("libs/sing-box.aar")
 
     compileOnly "com.google.android.play:core:$playCoreVersion"
     // add for undo and redo

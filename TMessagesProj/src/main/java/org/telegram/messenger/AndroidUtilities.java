@@ -4508,6 +4508,39 @@ public class AndroidUtilities {
                             password = data.getQueryParameter("pass");
                             secret = data.getQueryParameter("secret");
                         }
+                    } else if (scheme.equals("vless")) {
+                        address = data.getHost();
+                        if (AndroidUtilities.checkHostForPunycode(address)) {
+                            address = IDN.toASCII(address, IDN.ALLOW_UNASSIGNED);
+                        }
+                        port = String.valueOf(data.getPort());
+                        String userInfo = data.getUserInfo();
+                        if (userInfo != null) {
+                            user = userInfo;
+                        }
+                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
+                    } else if (scheme.equals("hysteria")) {
+                        address = data.getHost();
+                        if (AndroidUtilities.checkHostForPunycode(address)) {
+                            address = IDN.toASCII(address, IDN.ALLOW_UNASSIGNED);
+                        }
+                        port = String.valueOf(data.getPort());
+                        String auth = data.getQueryParameter("auth");
+                        if (auth != null) {
+                            password = auth;
+                        }
+                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
+                    } else if (scheme.equals("hysteria2") || scheme.equals("hy2")) {
+                        address = data.getHost();
+                        if (AndroidUtilities.checkHostForPunycode(address)) {
+                            address = IDN.toASCII(address, IDN.ALLOW_UNASSIGNED);
+                        }
+                        port = String.valueOf(data.getPort());
+                        String userInfo = data.getUserInfo();
+                        if (userInfo != null) {
+                            password = userInfo;
+                        }
+                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
                     }
                 }
                 if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(port)) {
