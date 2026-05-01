@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLDecoder;
 
-import libbox.Libbox;
+import io.nekohasekai.Libbox;
 
 public class SingBoxManager {
 

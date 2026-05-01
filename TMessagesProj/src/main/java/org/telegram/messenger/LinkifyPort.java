@@ -175,7 +175,7 @@ public class LinkifyPort {
     private static final String DOMAIN_NAME_STR = "(" + HOST_NAME + "|" + IP_ADDRESS_STRING + ")";
     private static final Pattern DOMAIN_NAME = Pattern.compile(DOMAIN_NAME_STR);
     private static final String PROTOCOL = "(?i:http|https|ton|tg|tonsite)://";
-    private static final String PROXY_PROTOCOL = "(?i:vmess|vmess1|vless|ss|ssr|trojan|ws|wss|hysteria|hysteria2|hy2)://";
+    private static final String PROXY_PROTOCOL = "(?i:vmess|vmess1|vless|ss|trojan|hysteria|hysteria2|hy2)://";
     private static final String WORD_BOUNDARY = "(?:\\b|$|^)";
     private static final String USER_INFO = "(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"
             + "\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,64}(?:\\:(?:[a-zA-Z0-9\\$\\-\\_"

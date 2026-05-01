@@ -721,12 +721,9 @@ public class Browser {
             return true;
         } else if ("tg".equals(uri.getScheme()) ||
                 "vmess".equals(uri.getScheme()) ||
-                "vmesss1".equals(uri.getScheme()) ||
+                "vmess1".equals(uri.getScheme()) ||
                 "vless".equals(uri.getScheme()) ||
                 "ss".equals(uri.getScheme()) ||
-                "ssr".equals(uri.getScheme()) ||
-                "ws".equals(uri.getScheme()) ||
-                "wss".equals(uri.getScheme()) ||
                 "trojan".equals(uri.getScheme()) ||
                 "hysteria".equals(uri.getScheme()) ||
                 "hysteria2".equals(uri.getScheme()) ||

@@ -209,7 +209,6 @@ android {
             jniDebuggable true
             multiDexEnabled true
             zipAlignEnabled true
-            signingConfig signingConfigs.release
         }
 
         release {
@@ -221,7 +220,6 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ["release", "debug"]
-            signingConfig signingConfigs.release
         }
     }
 

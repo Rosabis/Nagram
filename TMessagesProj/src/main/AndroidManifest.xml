@@ -425,6 +425,10 @@
                 <data android:scheme="hysteria" />
                 <data android:scheme="hysteria2" />
                 <data android:scheme="hy2" />
+                <data android:scheme="vmess" />
+                <data android:scheme="vmess1" />
+                <data android:scheme="trojan" />
+                <data android:scheme="ss" />
             </intent-filter>
             <intent-filter>
                 <action android:name="org.telegram.messenger.CREATE_STICKER_PACK"/>
