@@ -10,10 +10,11 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.SharedConfig;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URLDecoder;
 
+import io.nekohasekai.libbox.BoxService;
 import io.nekohasekai.libbox.Libbox;
+import io.nekohasekai.libbox.SetupOptions;
 
 public class SingBoxManager {
 
@@ -23,6 +24,7 @@ public class SingBoxManager {
     private static SingBoxManager instance;
     private boolean running = false;
     private String currentLink = "";
+    private BoxService currentService;
 
     public static synchronized SingBoxManager getInstance() {
         if (instance == null) {
@@ -79,14 +81,17 @@ public class SingBoxManager {
 
             File baseDir = new File(ApplicationLoader.applicationContext.getFilesDir(), "sing-box");
             baseDir.mkdirs();
+            File tempDir = new File(baseDir, "temp");
+            tempDir.mkdirs();
 
-            File configFile = new File(baseDir, "config.json");
-            try (FileOutputStream fos = new FileOutputStream(configFile)) {
-                fos.write(config.getBytes("UTF-8"));
-            }
+            SetupOptions setupOptions = Libbox.newSetupOptions();
+            setupOptions.setBaseDirectory(baseDir.getAbsolutePath());
+            setupOptions.setWorkingDirectory(tempDir.getAbsolutePath());
+            setupOptions.setTemporaryDirectory(new File(tempDir, "tmp").getAbsolutePath());
+            Libbox.setup(setupOptions);
 
-            Libbox.setup(baseDir.getAbsolutePath());
-            Libbox.start(configFile.getAbsolutePath());
+            currentService = Libbox.newService(config, null);
+            currentService.start();
             running = true;
             FileLog.d(TAG + ": sing-box started for " + link.substring(0, Math.min(link.length(), 50)));
         } catch (Exception e) {
@@ -126,7 +131,10 @@ public class SingBoxManager {
     public synchronized void stop() {
         if (running) {
             try {
-                Libbox.close();
+                if (currentService != null) {
+                    currentService.close();
+                    currentService = null;
+                }
             } catch (Exception e) {
                 FileLog.e(TAG + ": failed to stop sing-box", e);
             }
