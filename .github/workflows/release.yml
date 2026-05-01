@@ -143,6 +143,7 @@ jobs:
     needs:
       - ffmpeg
       - boringssl
+      - singbox
     strategy:
       matrix:
         flavor:
@@ -157,6 +158,26 @@ jobs:
           git submodule status TMessagesProj/jni/ffmpeg > ffmpeg_status
           git submodule status TMessagesProj/jni/libvpx > libvpx_status
           git submodule status TMessagesProj/jni/boringssl > boringssl_status
+      - name: sing-box Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            TMessagesProj/libs/sing-box.aar
+          key: sing-box-v1.11.1
+      - name: Ensure sing-box AAR exists
+        run: |
+          if [ ! -f TMessagesProj/libs/sing-box.aar ]; then
+            mkdir -p TMessagesProj/libs
+            cd TMessagesProj/libs
+            mkdir -p stub/META-INF
+            echo '<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.nekohasekai.libbox"/>' > stub/AndroidManifest.xml
+            echo 'Manifest-Version: 1.0' > stub/META-INF/MANIFEST.MF
+            jar cf sing-box.aar -C stub AndroidManifest.xml -C stub META-INF
+            rm -rf stub
+            echo "Created stub sing-box.aar"
+          else
+            echo "sing-box.aar found in cache"
+          fi
       - name: Native Cache
         id: cache
         uses: actions/cache@v4

@@ -1,0 +1,128 @@
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/avcodec.h:44:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/bsf.h:30:
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/packet.h:346:16: warning: 'convergence_duration' is deprecated [-Wdeprecated-declarations]
+C/C++: typedef struct AVPacket {
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/packet.h:397:5: note: 'convergence_duration' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavutil/attributes.h:100:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:760:13: warning: comparison between NULL and non-pointer ('jlong' (aka 'long long') and NULL) [-Wnull-arithmetic]
+C/C++:     if (ptr == NULL || bitmap == nullptr || data == nullptr) {
+C/C++:         ~~~ ^  ~~~~
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:760:16: warning: implicit conversion of NULL constant to 'long long' [-Wnull-conversion]
+C/C++:     if (ptr == NULL || bitmap == nullptr || data == nullptr) {
+C/C++:             ~~ ^~~~
+C/C++:                0
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:860:13: warning: comparison between NULL and non-pointer ('jlong' (aka 'long long') and NULL) [-Wnull-arithmetic]
+C/C++:     if (ptr == NULL) {
+C/C++:         ~~~ ^  ~~~~
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:860:16: warning: implicit conversion of NULL constant to 'long long' [-Wnull-conversion]
+C/C++:     if (ptr == NULL) {
+C/C++:             ~~ ^~~~
+C/C++:                0
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:21:
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/get_bits.h:70:28: warning: function 'show_bits' has internal linkage but is not defined [-Wundefined-internal]
+C/C++: static inline unsigned int show_bits(GetBitContext *s, int n);
+C/C++:                            ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/get_bits.h:666:16: note: used here
+C/C++:         return show_bits(s, n);
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/gifvideo.cpp:151:27: warning: unused function 'get_format' [-Wunused-function]
+C/C++: static enum AVPixelFormat get_format(AVCodecContext *ctx,
+C/C++:                           ^
+C/C++: 23 warnings generated.
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/lottie.cpp:12:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/FileLog.h:12:
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/Defines.h:142:16: warning: 'ConnectiosManagerDelegate' has virtual functions but non-virtual destructor [-Wnon-virtual-dtor]
+C/C++: typedef struct ConnectiosManagerDelegate {
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/Defines.h:161:16: warning: 'HandshakeDelegate' has virtual functions but non-virtual destructor [-Wnon-virtual-dtor]
+C/C++: typedef struct HandshakeDelegate {
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/lottie.cpp:19:1: warning: typedef requires a name [-Wmissing-declarations]
+C/C++: typedef struct LottieInfo {
+C/C++: ^~~~~~~
+C/C++: 3 warnings generated.
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/exoplayer/ffmpeg_jni.cc:22:9: warning: '__STDC_CONSTANT_MACROS' macro redefined [-Wmacro-redefined]
+C/C++: #define __STDC_CONSTANT_MACROS
+C/C++:         ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/.cxx/RelWithDebInfo/6l161g38/armeabi-v7a/<command line>:64:9: note: previous definition is here
+C/C++: #define __STDC_CONSTANT_MACROS 1
+C/C++:         ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/exoplayer/ffmpeg_jni.cc:151:3: warning: 'av_init_packet' is deprecated [-Wdeprecated-declarations]
+C/C++:   av_init_packet(&packet);
+C/C++:   ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavcodec/packet.h:487:1: note: 'av_init_packet' has been explicitly marked deprecated here
+C/C++: attribute_deprecated
+C/C++: ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/ffmpeg/build/armeabi-v7a/include/libavutil/attributes.h:100:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/exoplayer/ffmpeg_jni.cc:341:9: warning: unused variable 'inSampleSize' [-Wunused-variable]
+C/C++:     int inSampleSize = av_get_bytes_per_sample(sampleFormat);
+C/C++:         ^
+C/C++: 3 warnings generated.
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/TgNetWrapper.cpp:2:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/ApiScheme.h:14:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/TLObject.h:13:
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/Defines.h:142:16: warning: 'ConnectiosManagerDelegate' has virtual functions but non-virtual destructor [-Wnon-virtual-dtor]
+C/C++: typedef struct ConnectiosManagerDelegate {
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/tgnet/Defines.h:161:16: warning: 'HandshakeDelegate' has virtual functions but non-virtual destructor [-Wnon-virtual-dtor]
+C/C++: typedef struct HandshakeDelegate {
+C/C++:                ^
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/TgNetWrapper.cpp:355:7: warning: 'Delegate' has virtual functions but non-virtual destructor [-Wnon-virtual-dtor]
+C/C++: class Delegate : public ConnectiosManagerDelegate {
+C/C++:       ^
+C/C++: 3 warnings generated.
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/org_telegram_messenger_voip_Instance.cpp:321:88: warning: adding 'jint' (aka 'int') to a string does not append to the string [-Wstring-plus-int]
+C/C++:             throwNewJavaIllegalArgumentException(env, "Unknown data saving constant: " + dataSaving);
+C/C++:                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/org_telegram_messenger_voip_Instance.cpp:321:88: note: use array indexing to silence this warning
+C/C++:             throwNewJavaIllegalArgumentException(env, "Unknown data saving constant: " + dataSaving);
+C/C++:                                                                                        ^
+C/C++:                                                       &                                [           ]
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/org_telegram_messenger_voip_Instance.cpp:1273:39: warning: format specifies type 'int' but the argument has type 'jlong' (aka 'long long') [-Wformat]
+C/C++:     DEBUG_D("setConferenceCallId %d", call_id);
+C/C++:                                  ~~   ^~~~~~~
+C/C++:                                  %lld
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/org_telegram_messenger_voip_Instance.cpp:20:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/tgcalls/legacy/InstanceImplLegacy.h:6:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/libtgvoip/VoIPController.h:24:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/libtgvoip/video/VideoSource.h:12:
+C/C++: In file included from /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/libtgvoip/os/android/../../Buffers.h:19:
+C/C++: /home/runner/work/Nagram/Nagram/TMessagesProj/jni/voip/libtgvoip/threading.h:110:8: warning: private field 'maxPriority' is not used [-Wunused-private-field]
+C/C++:                 bool maxPriority=false;
+C/C++:                      ^
+C/C++: 3 warnings generated.
+
+> Task :TMessagesProj:mergeReleaseJniLibFolders
+
+> Task :TMessagesProj:mergeReleaseNativeLibs
+WARNING: [Processor] Library '/home/runner/.gradle/caches/modules-2/files-2.1/com.google.android.gms/play-services-cast-framework/21.4.0/c48f09b1c439b395ce46bc0d1c187913819f8c7f/play-services-cast-framework-21.4.0.aar' contains references to both AndroidX and old support library. This seems like the library is partially migrated. Jetifier will try to rewrite the library anyway.
+ Example of androidX reference: 'androidx/core/app/TaskStackBuilder'
+ Example of support library reference: 'android/support/v4/media/session/MediaSessionCompat$Token'
+
+> Task :TMessagesProj:mergeReleaseNativeLibs FAILED
+
+7 actionable tasks: 7 executed
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':TMessagesProj:mergeReleaseNativeLibs'.
+> Could not resolve all files for configuration ':TMessagesProj:releaseRuntimeClasspath'.
+   > Failed to transform sing-box.aar to match attributes {artifactType=android-jni, org.gradle.category=library}.
+      > Execution failed for JetifyTransform: /home/runner/work/Nagram/Nagram/TMessagesProj/libs/sing-box.aar.
+         > Transform's input file does not exist: /home/runner/work/Nagram/Nagram/TMessagesProj/libs/sing-box.aar. (See https://issuetracker.google.com/issues/158753935)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 9m 49s
+Error: Process completed with exit code 1.
