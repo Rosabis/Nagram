@@ -76,6 +76,7 @@ public class ProxySettingsActivity extends BaseFragment {
 
     private final static int TYPE_SOCKS5 = 0;
     private final static int TYPE_MTPROTO = 1;
+    private final static int TYPE_SINGBOX = 2;
 
     private final static int FIELD_IP = 0;
     private final static int FIELD_PORT = 1;
@@ -93,7 +94,7 @@ public class ProxySettingsActivity extends BaseFragment {
     private TextSettingsCell shareCell;
     private TextSettingsCell pasteCell;
     private ActionBarMenuItem doneItem;
-    private RadioCell[] typeCell = new RadioCell[2];
+    private RadioCell[] typeCell = new RadioCell[3];
     private int currentType = -1;
 
     private int pasteType = -1;
@@ -212,14 +213,28 @@ public class ProxySettingsActivity extends BaseFragment {
                     }
                     currentProxyInfo.address = inputFields[FIELD_IP].getText().toString();
                     currentProxyInfo.port = Utilities.parseInt(inputFields[FIELD_PORT].getText().toString());
-                    if (currentType == 0) {
+                    if (currentType == TYPE_SOCKS5) {
                         currentProxyInfo.secret = "";
                         currentProxyInfo.username = inputFields[FIELD_USER].getText().toString();
                         currentProxyInfo.password = inputFields[FIELD_PASSWORD].getText().toString();
-                    } else {
+                    } else if (currentType == TYPE_MTPROTO) {
                         currentProxyInfo.secret = inputFields[FIELD_SECRET].getText().toString();
                         currentProxyInfo.username = "";
                         currentProxyInfo.password = "";
+                    } else if (currentType == TYPE_SINGBOX) {
+                        currentProxyInfo.secret = inputFields[FIELD_SECRET].getText().toString();
+                        currentProxyInfo.username = "";
+                        currentProxyInfo.password = "";
+                        try {
+                            android.net.Uri sbUri = android.net.Uri.parse(currentProxyInfo.secret);
+                            if (sbUri.getHost() != null) {
+                                currentProxyInfo.address = sbUri.getHost();
+                                if (sbUri.getPort() != -1) {
+                                    currentProxyInfo.port = sbUri.getPort();
+                                }
+                            }
+                        } catch (Exception ignore) {
+                        }
                     }
 
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
@@ -269,14 +284,16 @@ public class ProxySettingsActivity extends BaseFragment {
 
         final View.OnClickListener typeCellClickListener = view -> setProxyType((Integer) view.getTag(), true);
 
-        for (int a = 0; a < 2; a++) {
+        for (int a = 0; a < 3; a++) {
             typeCell[a] = new RadioCell(context);
             typeCell[a].setBackground(Theme.getSelectorDrawable(true));
             typeCell[a].setTag(a);
             if (a == 0) {
-                typeCell[a].setText(LocaleController.getString(R.string.UseProxySocks5), a == currentType, true);
+                typeCell[a].setText(LocaleController.getString(R.string.UseProxySocks5), a == currentType, a != 2);
+            } else if (a == 1) {
+                typeCell[a].setText(LocaleController.getString(R.string.UseProxyTelegram), a == currentType, a != 2);
             } else {
-                typeCell[a].setText(LocaleController.getString(R.string.UseProxyTelegram), a == currentType, false);
+                typeCell[a].setText("sing-box (VLESS/VMess/Trojan/SS/Hysteria)", a == currentType, false);
             }
             linearLayout2.addView(typeCell[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50));
             typeCell[a].setOnClickListener(typeCellClickListener);
@@ -410,6 +427,28 @@ public class ProxySettingsActivity extends BaseFragment {
                 case FIELD_SECRET:
                     inputFields[a].setHintText(LocaleController.getString(R.string.UseProxySecret));
                     inputFields[a].setText(currentProxyInfo.secret);
+                    inputFields[a].addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (currentType == TYPE_SINGBOX && isSingBoxSecret(s.toString())) {
+                                try {
+                                    android.net.Uri sbUri = android.net.Uri.parse(s.toString());
+                                    if (sbUri.getHost() != null) {
+                                        ignoreOnTextChange = true;
+                                        inputFields[FIELD_IP].setText(sbUri.getHost());
+                                        if (sbUri.getPort() != -1) {
+                                            inputFields[FIELD_PORT].setText(String.valueOf(sbUri.getPort()));
+                                        }
+                                        ignoreOnTextChange = false;
+                                    }
+                                } catch (Exception ignore) {}
+                            }
+                        }
+                    });
                     break;
             }
             inputFields[a].setSelection(inputFields[a].length());
@@ -458,6 +497,9 @@ public class ProxySettingsActivity extends BaseFragment {
                     if (pasteType == TYPE_MTPROTO && (i == FIELD_USER || i == FIELD_PASSWORD)) {
                         continue;
                     }
+                    if (pasteType == TYPE_SINGBOX && (i == FIELD_USER || i == FIELD_PASSWORD)) {
+                        continue;
+                    }
                     if (pasteFields[i] != null) {
                         try {
                             inputFields[i].setText(URLDecoder.decode(pasteFields[i], "UTF-8"));
@@ -476,6 +518,9 @@ public class ProxySettingsActivity extends BaseFragment {
                             continue;
                         }
                         if (pasteType == TYPE_MTPROTO && i != FIELD_USER && i != FIELD_PASSWORD) {
+                            continue;
+                        }
+                        if (pasteType == TYPE_SINGBOX && i != FIELD_USER && i != FIELD_PASSWORD) {
                             continue;
                         }
                         inputFields[i].setText(null);
@@ -558,7 +603,15 @@ public class ProxySettingsActivity extends BaseFragment {
         checkShareDone(false);
 
         currentType = -1;
-        setProxyType(TextUtils.isEmpty(currentProxyInfo.secret) ? 0 : 1, false);
+        int initialType;
+        if (isSingBoxSecret(currentProxyInfo.secret)) {
+            initialType = TYPE_SINGBOX;
+        } else if (TextUtils.isEmpty(currentProxyInfo.secret)) {
+            initialType = TYPE_SOCKS5;
+        } else {
+            initialType = TYPE_MTPROTO;
+        }
+        setProxyType(initialType, false);
 
         pasteType = -1;
         pasteString = null;
@@ -613,33 +666,16 @@ public class ProxySettingsActivity extends BaseFragment {
                 }
             }
 
-            if (params == null && (clipText.startsWith("vless://") || clipText.startsWith("hysteria://") || clipText.startsWith("hysteria2://") || clipText.startsWith("hy2://"))) {
+            if (params == null && (clipText.startsWith("vless://") || clipText.startsWith("vmess://") || clipText.startsWith("vmess1://") || clipText.startsWith("trojan://") || clipText.startsWith("ss://") || clipText.startsWith("hysteria://") || clipText.startsWith("hysteria2://") || clipText.startsWith("hy2://"))) {
                 try {
                     android.net.Uri proxyUri = android.net.Uri.parse(clipText);
-                    String scheme = proxyUri.getScheme();
-                    pasteType = TYPE_MTPROTO;
+                    pasteType = TYPE_SINGBOX;
                     pasteFields[FIELD_IP] = proxyUri.getHost();
                     int proxyPort = proxyUri.getPort();
                     if (proxyPort != -1) {
                         pasteFields[FIELD_PORT] = String.valueOf(proxyPort);
                     }
                     pasteFields[FIELD_SECRET] = clipText;
-                    if ("vless".equals(scheme)) {
-                        String userInfo = proxyUri.getUserInfo();
-                        if (userInfo != null) {
-                            pasteFields[FIELD_USER] = userInfo;
-                        }
-                    } else if ("hysteria".equals(scheme)) {
-                        String auth = proxyUri.getQueryParameter("auth");
-                        if (auth != null) {
-                            pasteFields[FIELD_PASSWORD] = auth;
-                        }
-                    } else {
-                        String userInfo = proxyUri.getUserInfo();
-                        if (userInfo != null) {
-                            pasteFields[FIELD_PASSWORD] = userInfo;
-                        }
-                    }
                     params = new String[0];
                 } catch (Exception ignore) {
                 }
@@ -769,21 +805,32 @@ public class ProxySettingsActivity extends BaseFragment {
 
                 TransitionManager.beginDelayedTransition(linearLayout2, transitionSet);
             }
-            if (currentType == 0) {
+            if (currentType == TYPE_SOCKS5) {
                 bottomCells[0].setVisibility(View.VISIBLE);
                 bottomCells[1].setVisibility(View.GONE);
                 ((View) inputFields[FIELD_SECRET].getParent()).setVisibility(View.GONE);
                 ((View) inputFields[FIELD_PASSWORD].getParent()).setVisibility(View.VISIBLE);
                 ((View) inputFields[FIELD_USER].getParent()).setVisibility(View.VISIBLE);
-            } else if (currentType == 1) {
+            } else if (currentType == TYPE_MTPROTO) {
                 bottomCells[0].setVisibility(View.GONE);
                 bottomCells[1].setVisibility(View.VISIBLE);
                 ((View) inputFields[FIELD_SECRET].getParent()).setVisibility(View.VISIBLE);
                 ((View) inputFields[FIELD_PASSWORD].getParent()).setVisibility(View.GONE);
                 ((View) inputFields[FIELD_USER].getParent()).setVisibility(View.GONE);
+            } else if (currentType == TYPE_SINGBOX) {
+                bottomCells[0].setVisibility(View.GONE);
+                bottomCells[1].setVisibility(View.GONE);
+                ((View) inputFields[FIELD_SECRET].getParent()).setVisibility(View.VISIBLE);
+                ((View) inputFields[FIELD_PASSWORD].getParent()).setVisibility(View.GONE);
+                ((View) inputFields[FIELD_USER].getParent()).setVisibility(View.GONE);
+                inputFields[FIELD_SECRET].setHintText("Proxy Link (vless:// vmess:// trojan:// ss:// hysteria:// ...)");
             }
-            typeCell[0].setChecked(currentType == 0, animated);
-            typeCell[1].setChecked(currentType == 1, animated);
+            if (currentType == TYPE_MTPROTO) {
+                inputFields[FIELD_SECRET].setHintText(LocaleController.getString(R.string.UseProxySecret));
+            }
+            typeCell[0].setChecked(currentType == TYPE_SOCKS5, animated);
+            typeCell[1].setChecked(currentType == TYPE_MTPROTO, animated);
+            typeCell[2].setChecked(currentType == TYPE_SINGBOX, animated);
         }
     }
 
@@ -793,6 +840,14 @@ public class ProxySettingsActivity extends BaseFragment {
             inputFields[FIELD_IP].requestFocus();
             AndroidUtilities.showKeyboard(inputFields[FIELD_IP]);
         }
+    }
+
+    private static boolean isSingBoxSecret(String secret) {
+        if (TextUtils.isEmpty(secret)) return false;
+        return secret.startsWith("vless://") || secret.startsWith("vmess://") ||
+               secret.startsWith("vmess1://") || secret.startsWith("trojan://") ||
+               secret.startsWith("ss://") || secret.startsWith("hysteria://") ||
+               secret.startsWith("hysteria2://") || secret.startsWith("hy2://");
     }
 
     @Override

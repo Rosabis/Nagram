@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.SharedConfig;
@@ -93,6 +94,33 @@ public class SingBoxManager {
             running = false;
             currentLink = "";
         }
+    }
+
+    public void ping(SharedConfig.ProxyInfo proxyInfo, long timeoutMs, PingCallback callback) {
+        new Thread(() -> {
+            long startTime = System.currentTimeMillis();
+            try {
+                start(proxyInfo);
+                if (!running) {
+                    AndroidUtilities.runOnUIThread(() -> callback.onResult(-1));
+                    return;
+                }
+                java.net.Socket socket = new java.net.Socket();
+                java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS,
+                        new java.net.InetSocketAddress("127.0.0.1", LOCAL_SOCKS_PORT));
+                socket.connect(new java.net.InetSocketAddress("149.154.167.50", 443), (int) timeoutMs);
+                long pingTime = System.currentTimeMillis() - startTime;
+                socket.close();
+                AndroidUtilities.runOnUIThread(() -> callback.onResult(pingTime));
+            } catch (Exception e) {
+                FileLog.e(TAG + ": ping failed", e);
+                AndroidUtilities.runOnUIThread(() -> callback.onResult(-1));
+            }
+        }).start();
+    }
+
+    public interface PingCallback {
+        void onResult(long pingTime);
     }
 
     public synchronized void stop() {
