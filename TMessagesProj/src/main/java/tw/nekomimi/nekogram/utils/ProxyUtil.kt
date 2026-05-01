@@ -318,6 +318,8 @@ object ProxyUtil {
 
         var error = false
 
+        val sbProtocols = listOf("vless://", "vmess://", "vmess1://", "trojan://", "ss://", "hysteria://", "hysteria2://", "hy2://")
+
         text?.trim()?.split('\n')?.map { it.split(" ") }?.forEach {
 
             it.forEach { line ->
@@ -333,6 +335,42 @@ object ProxyUtil {
 
                         showToast(LocaleController.getString(R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
 
+                    }
+
+                } else {
+
+                    val sbLine = sbProtocols.firstOrNull { line.startsWith(it) }
+                    if (sbLine != null) {
+                        runCatching {
+                            val uri = android.net.Uri.parse(line)
+                            var address = uri.host ?: ""
+                            var port = uri.port
+                            var secret = line
+                            if (line.startsWith("vmess://") || line.startsWith("vmess1://")) {
+                                try {
+                                    val encoded = line.substring(line.indexOf("://") + 3)
+                                    val decoded = android.util.Base64.decode(encoded, android.util.Base64.NO_WRAP)
+                                    val obj = org.json.JSONObject(String(decoded, charset("UTF-8")))
+                                    address = obj.optString("add", "")
+                                    port = obj.optInt("port", 443)
+                                } catch (ignore: Exception) {}
+                            } else if (line.startsWith("ss://")) {
+                                try {
+                                    var remaining = line.substring("ss://".length)
+                                    val hashIdx = remaining.indexOf('#')
+                                    if (hashIdx != -1) remaining = remaining.substring(0, hashIdx)
+                                    val atIdx = remaining.indexOf('@')
+                                    if (atIdx != -1) {
+                                        address = remaining.substring(atIdx + 1).split(":").getOrNull(0) ?: ""
+                                        port = remaining.substring(atIdx + 1).split(":").getOrNull(1)?.toIntOrNull() ?: 443
+                                    }
+                                } catch (ignore: Exception) {}
+                            }
+                            proxies.add(SharedConfig.ProxyInfo(address, port, "", "", secret))
+                        }.onFailure {
+                            error = true
+                            showToast(LocaleController.getString(R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
+                        }
                     }
 
                 }

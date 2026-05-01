@@ -4518,7 +4518,7 @@ public class AndroidUtilities {
                         if (userInfo != null) {
                             user = userInfo;
                         }
-                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
+                        secret = data.toString();
                     } else if (scheme.equals("hysteria")) {
                         address = data.getHost();
                         if (AndroidUtilities.checkHostForPunycode(address)) {
@@ -4529,7 +4529,7 @@ public class AndroidUtilities {
                         if (auth != null) {
                             password = auth;
                         }
-                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
+                        secret = data.toString();
                     } else if (scheme.equals("hysteria2") || scheme.equals("hy2")) {
                         address = data.getHost();
                         if (AndroidUtilities.checkHostForPunycode(address)) {
@@ -4540,7 +4540,45 @@ public class AndroidUtilities {
                         if (userInfo != null) {
                             password = userInfo;
                         }
-                        secret = scheme + "://" + data.toString().substring(data.toString().indexOf("://") + 3);
+                        secret = data.toString();
+                    } else if (scheme.equals("vmess") || scheme.equals("vmess1") || scheme.equals("trojan") || scheme.equals("ss")) {
+                        secret = data.toString();
+                        if (scheme.equals("trojan")) {
+                            address = data.getHost();
+                            if (address == null) address = "";
+                            if (AndroidUtilities.checkHostForPunycode(address)) {
+                                address = IDN.toASCII(address, IDN.ALLOW_UNASSIGNED);
+                            }
+                            int p = data.getPort();
+                            port = p != -1 ? String.valueOf(p) : "";
+                        } else if (scheme.equals("vmess") || scheme.equals("vmess1")) {
+                            try {
+                                String encoded = secret.substring(secret.indexOf("://") + 3);
+                                byte[] decoded = android.util.Base64.decode(encoded, android.util.Base64.NO_WRAP);
+                                org.json.JSONObject obj = new org.json.JSONObject(new String(decoded, "UTF-8"));
+                                address = obj.optString("add", "");
+                                port = String.valueOf(obj.optInt("port", 443));
+                            } catch (Exception ignore) {
+                                address = "";
+                                port = "";
+                            }
+                        } else {
+                            try {
+                                String remaining = secret.substring("ss://".length());
+                                int hashIdx = remaining.indexOf('#');
+                                if (hashIdx != -1) remaining = remaining.substring(0, hashIdx);
+                                int atIdx = remaining.indexOf('@');
+                                if (atIdx != -1) {
+                                    String serverPart = remaining.substring(atIdx + 1);
+                                    String[] serverPort = serverPart.split(":");
+                                    address = serverPort[0];
+                                    port = serverPort.length > 1 ? serverPort[1] : "";
+                                }
+                            } catch (Exception ignore) {
+                                address = "";
+                                port = "";
+                            }
+                        }
                     }
                 }
                 if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(port)) {
@@ -4678,15 +4716,28 @@ public class AndroidUtilities {
                     cell.getTextView().setText(spannableStringBuilder);
                     cell.getTextView().setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
                     try {
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(address, Integer.parseInt(port), user, password, secret, time -> AndroidUtilities.runOnUIThread(() -> {
-                            if (time == -1) {
-                                cell.getTextView().setText(getString(R.string.Unavailable));
-                                cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
-                            } else {
-                                cell.getTextView().setText(getString(R.string.Available) + ", " + LocaleController.formatString(R.string.Ping, time));
-                                cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGreenText));
-                            }
-                        }));
+                        if (secret != null && (secret.startsWith("vless://") || secret.startsWith("vmess://") || secret.startsWith("vmess1://") || secret.startsWith("trojan://") || secret.startsWith("ss://") || secret.startsWith("hysteria://") || secret.startsWith("hysteria2://") || secret.startsWith("hy2://"))) {
+                            SharedConfig.ProxyInfo sbInfo = new SharedConfig.ProxyInfo(address, Integer.parseInt(port), user, password, secret);
+                            tw.nekomimi.nekogram.singbox.SingBoxManager.getInstance().ping(sbInfo, 5000, time -> AndroidUtilities.runOnUIThread(() -> {
+                                if (time == -1) {
+                                    cell.getTextView().setText(getString(R.string.Unavailable));
+                                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+                                } else {
+                                    cell.getTextView().setText(getString(R.string.Available) + ", " + LocaleController.formatString(R.string.Ping, time));
+                                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGreenText));
+                                }
+                            }));
+                        } else {
+                            ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(address, Integer.parseInt(port), user, password, secret, time -> AndroidUtilities.runOnUIThread(() -> {
+                                if (time == -1) {
+                                    cell.getTextView().setText(getString(R.string.Unavailable));
+                                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+                                } else {
+                                    cell.getTextView().setText(getString(R.string.Available) + ", " + LocaleController.formatString(R.string.Ping, time));
+                                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGreenText));
+                                }
+                            }));
+                        }
                     } catch (NumberFormatException ignored) {
                         cell.getTextView().setText(getString(R.string.Unavailable));
                         cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
