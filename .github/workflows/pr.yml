@@ -20,7 +20,7 @@ jobs:
         with:
           path: |
             TMessagesProj/libs/sing-box.aar
-          key: sing-box-v1.11.1
+          key: sing-box-v1.11.2
       - name: Set up Go
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@v5
@@ -158,7 +158,7 @@ jobs:
         with:
           path: |
             TMessagesProj/libs/sing-box.aar
-          key: sing-box-v1.11.1
+          key: sing-box-v1.11.2
       - name: Native Cache
         id: cache
         uses: actions/cache@v4
@@ -254,7 +254,7 @@ jobs:
         with:
           path: |
             TMessagesProj/libs/sing-box.aar
-          key: sing-box-v1.11.1
+          key: sing-box-v1.11.2
       - name: Verify sing-box AAR exists
         run: |
           if [ ! -f TMessagesProj/libs/sing-box.aar ]; then
