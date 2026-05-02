@@ -16,6 +16,7 @@ import io.nekohasekai.libbox.BoxService;
 import io.nekohasekai.libbox.InterfaceUpdateListener;
 import io.nekohasekai.libbox.Libbox;
 import io.nekohasekai.libbox.NetworkInterfaceIterator;
+import io.nekohasekai.libbox.Notification;
 import io.nekohasekai.libbox.PlatformInterface;
 import io.nekohasekai.libbox.SetupOptions;
 import io.nekohasekai.libbox.TunOptions;
@@ -58,6 +59,8 @@ public class SingBoxManager {
         public void writeLog(String message) {}
         @Override
         public int uidByPackageName(String packageName) { return -1; }
+        @Override
+        public void sendNotification(Notification notification) {}
     };
 
     public static synchronized SingBoxManager getInstance() {
