@@ -13,16 +13,13 @@ import java.io.File;
 import java.net.URLDecoder;
 
 import io.nekohasekai.libbox.BoxService;
-import io.nekohasekai.libbox.ConnectionOwner;
 import io.nekohasekai.libbox.InterfaceUpdateListener;
 import io.nekohasekai.libbox.Libbox;
-import io.nekohasekai.libbox.LocalDNSTransport;
 import io.nekohasekai.libbox.NetworkInterfaceIterator;
 import io.nekohasekai.libbox.PlatformInterface;
 import io.nekohasekai.libbox.SetupOptions;
 import io.nekohasekai.libbox.StringIterator;
 import io.nekohasekai.libbox.TunOptions;
-import io.nekohasekai.libbox.WIFIState;
 
 public class SingBoxManager {
 
@@ -44,8 +41,6 @@ public class SingBoxManager {
         @Override
         public boolean useProcFS() { return false; }
         @Override
-        public ConnectionOwner findConnectionOwner(int ipProtocol, String sourceAddress, int sourcePort, String destinationAddress, int destinationPort) { return null; }
-        @Override
         public void startDefaultInterfaceMonitor(InterfaceUpdateListener listener) {}
         @Override
         public void closeDefaultInterfaceMonitor(InterfaceUpdateListener listener) {}
@@ -58,11 +53,9 @@ public class SingBoxManager {
         @Override
         public void clearDNSCache() {}
         @Override
-        public WIFIState readWIFIState() { return null; }
+        public StringIterator readWIFIState() { return null; }
         @Override
-        public LocalDNSTransport localDNSTransport() { return null; }
-        @Override
-        public StringIterator systemCertificates() { return null; }
+        public void writeLog(String message) {}
     };
 
     public static synchronized SingBoxManager getInstance() {
