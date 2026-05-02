@@ -61,6 +61,8 @@ public class SingBoxManager {
         public int uidByPackageName(String packageName) { return -1; }
         @Override
         public void sendNotification(Notification notification) {}
+        @Override
+        public String packageNameByUid(int uid) { return ""; }
     };
 
     public static synchronized SingBoxManager getInstance() {
