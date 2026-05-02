@@ -18,8 +18,8 @@ import io.nekohasekai.libbox.Libbox;
 import io.nekohasekai.libbox.NetworkInterfaceIterator;
 import io.nekohasekai.libbox.PlatformInterface;
 import io.nekohasekai.libbox.SetupOptions;
-import io.nekohasekai.libbox.StringIterator;
 import io.nekohasekai.libbox.TunOptions;
+import io.nekohasekai.libbox.WIFIState;
 
 public class SingBoxManager {
 
@@ -53,9 +53,11 @@ public class SingBoxManager {
         @Override
         public void clearDNSCache() {}
         @Override
-        public StringIterator readWIFIState() { return null; }
+        public WIFIState readWIFIState() { return null; }
         @Override
         public void writeLog(String message) {}
+        @Override
+        public long uidByPackageName(String packageName) { return -1; }
     };
 
     public static synchronized SingBoxManager getInstance() {
