@@ -13,8 +13,16 @@ import java.io.File;
 import java.net.URLDecoder;
 
 import io.nekohasekai.libbox.BoxService;
+import io.nekohasekai.libbox.ConnectionOwner;
+import io.nekohasekai.libbox.InterfaceUpdateListener;
 import io.nekohasekai.libbox.Libbox;
+import io.nekohasekai.libbox.LocalDNSTransport;
+import io.nekohasekai.libbox.NetworkInterfaceIterator;
+import io.nekohasekai.libbox.PlatformInterface;
 import io.nekohasekai.libbox.SetupOptions;
+import io.nekohasekai.libbox.StringIterator;
+import io.nekohasekai.libbox.TunOptions;
+import io.nekohasekai.libbox.WIFIState;
 
 public class SingBoxManager {
 
@@ -25,6 +33,37 @@ public class SingBoxManager {
     private boolean running = false;
     private String currentLink = "";
     private BoxService currentService;
+
+    private static final PlatformInterface minimalPlatform = new PlatformInterface() {
+        @Override
+        public boolean usePlatformAutoDetectInterfaceControl() { return false; }
+        @Override
+        public void autoDetectInterfaceControl(int fd) {}
+        @Override
+        public int openTun(TunOptions options) { return -1; }
+        @Override
+        public boolean useProcFS() { return false; }
+        @Override
+        public ConnectionOwner findConnectionOwner(int ipProtocol, String sourceAddress, int sourcePort, String destinationAddress, int destinationPort) { return null; }
+        @Override
+        public void startDefaultInterfaceMonitor(InterfaceUpdateListener listener) {}
+        @Override
+        public void closeDefaultInterfaceMonitor(InterfaceUpdateListener listener) {}
+        @Override
+        public NetworkInterfaceIterator getInterfaces() { return null; }
+        @Override
+        public boolean underNetworkExtension() { return false; }
+        @Override
+        public boolean includeAllNetworks() { return false; }
+        @Override
+        public void clearDNSCache() {}
+        @Override
+        public WIFIState readWIFIState() { return null; }
+        @Override
+        public LocalDNSTransport localDNSTransport() { return null; }
+        @Override
+        public StringIterator systemCertificates() { return null; }
+    };
 
     public static synchronized SingBoxManager getInstance() {
         if (instance == null) {
@@ -90,7 +129,7 @@ public class SingBoxManager {
             setupOptions.setTempPath(new File(tempDir, "tmp").getAbsolutePath());
             Libbox.setup(setupOptions);
 
-            currentService = Libbox.newService(config, null);
+            currentService = Libbox.newService(config, minimalPlatform);
             currentService.start();
             running = true;
             FileLog.d(TAG + ": sing-box started for " + link.substring(0, Math.min(link.length(), 50)));
