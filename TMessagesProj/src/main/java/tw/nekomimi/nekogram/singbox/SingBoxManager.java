@@ -57,7 +57,7 @@ public class SingBoxManager {
         @Override
         public void writeLog(String message) {}
         @Override
-        public long uidByPackageName(String packageName) { return -1; }
+        public int uidByPackageName(String packageName) { return -1; }
     };
 
     public static synchronized SingBoxManager getInstance() {
